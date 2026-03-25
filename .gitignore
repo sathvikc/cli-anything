@@ -56,6 +56,7 @@
 !/musescore/
 !/krita/
 !/iterm2/
+!/slay_the_spire_ii/
 
 # Step 5: Inside each software dir, ignore everything (including dotfiles)
 /gimp/*
@@ -100,6 +101,8 @@
 /krita/.*
 /iterm2/*
 /iterm2/.*
+/slay_the_spire_ii/*
+/slay_the_spire_ii/.*
 
 # Step 6: ...except agent-harness/
 !/gimp/agent-harness/
@@ -124,6 +127,8 @@
 !/musescore/agent-harness/
 !/krita/agent-harness/
 !/iterm2/agent-harness/
+!/slay_the_spire_ii/agent-harness/
+!/slay_the_spire_ii/README.md
 
 # Step 7: Ignore build artifacts within allowed dirs
 **/__pycache__/
