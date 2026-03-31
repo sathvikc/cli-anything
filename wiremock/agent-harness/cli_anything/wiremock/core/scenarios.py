@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from cli_anything.wiremock.utils.client import WireMockClient
 
 
@@ -15,5 +17,5 @@ class ScenariosManager:
         r.raise_for_status()
 
     def set_state(self, name: str, state: str) -> None:
-        r = self.client.put(f"/scenarios/{name}/state", json={"state": state})
+        r = self.client.put(f"/scenarios/{quote(name, safe='')}/state", json={"state": state})
         r.raise_for_status()

@@ -8,9 +8,9 @@ class StubsManager:
 
     def list(self, limit: int = None, offset: int = None) -> dict:
         params = {}
-        if limit:
+        if limit is not None:
             params["limit"] = limit
-        if offset:
+        if offset is not None:
             params["offset"] = offset
         r = self.client.get("/mappings", params=params)
         r.raise_for_status()

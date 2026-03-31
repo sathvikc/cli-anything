@@ -7,9 +7,9 @@ class RequestsLog:
 
     def list(self, limit: int = None, since: str = None) -> dict:
         params = {}
-        if limit:
+        if limit is not None:
             params["limit"] = limit
-        if since:
+        if since is not None:
             params["since"] = since
         r = self.client.get("/requests", params=params)
         r.raise_for_status()

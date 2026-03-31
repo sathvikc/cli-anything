@@ -85,7 +85,7 @@ cli-anything-wiremock stub create '{
 
 # Verify a POST was made exactly once
 cli-anything-wiremock --json request count '{"method":"POST","url":"/api/orders"}'
-# → {"status":"ok","message":"...","data":{"count":1}}
+# → {"count": 1}
 
 # Scenario: advance state
 cli-anything-wiremock scenario set "cart-flow" "item-added"
@@ -100,11 +100,18 @@ cli-anything-wiremock record stop
 
 ### Always use `--json` in agent contexts
 
-Use `--json` for all invocations in scripts or agent tool calls. This produces a stable, parseable envelope:
+Use `--json` for all invocations in scripts or agent tool calls. This returns the raw WireMock API response JSON directly (no envelope wrapper):
 
-```json
-{ "status": "ok", "message": "Created stub abc-123", "data": { ... } }
-{ "status": "error", "message": "Connection refused" }
+```bash
+# Example: create a stub and get the raw WireMock response
+cli-anything-wiremock --json stub quick GET /api/hello 200 --body '{"hello":"world"}'
+# → {"id": "abc-123", "request": {...}, "response": {...}, ...}
+
+# Commands with no response body return:
+# → {"status": "ok"}
+
+# Errors return:
+# → {"status": "error", "message": "Connection refused"}
 ```
 
 ### Connection via environment
@@ -134,4 +141,4 @@ export WIREMOCK_PORT=8080
 
 ### Error handling
 
-Non-zero exit code on all errors. Check `status` field in JSON output. The `data` field is `null` on errors.
+Non-zero exit code on all errors. In `--json` mode, errors return `{"status": "error", "message": "..."}`. Success returns the raw WireMock API response.

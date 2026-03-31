@@ -1,5 +1,4 @@
 import json
-import sys
 import click
 from cli_anything.wiremock.utils.client import WireMockClient
 from cli_anything.wiremock.utils.output import error, print_json, print_table, success
@@ -9,9 +8,6 @@ from cli_anything.wiremock.core.scenarios import ScenariosManager
 from cli_anything.wiremock.core.session import Session
 from cli_anything.wiremock.core.settings import SettingsManager
 from cli_anything.wiremock.core.stubs import StubsManager
-
-pass_client = click.make_pass_decorator(WireMockClient)
-
 
 @click.group()
 @click.option(
@@ -139,9 +135,16 @@ def stub_create(ctx, mapping_json):
     client = ctx.obj
     json_mode = ctx.meta.get("json_mode", False)
     try:
-        mapping = json.loads(mapping_json)
+        if mapping_json.startswith("@"):
+            with open(mapping_json[1:]) as f:
+                mapping = json.load(f)
+        else:
+            mapping = json.loads(mapping_json)
         data = StubsManager(client).create(mapping)
-        success(f"Created stub {data.get('id')}", data, json_mode)
+        if json_mode:
+            print_json(data)
+        else:
+            success(f"Created stub {data.get('id')}", data)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -159,7 +162,10 @@ def stub_quick(ctx, method, url, status, body, content_type):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         data = StubsManager(client).quick_stub(method, url, status, body, content_type)
-        success(f"Created stub {data.get('id')}", data, json_mode)
+        if json_mode:
+            print_json(data)
+        else:
+            success(f"Created stub {data.get('id')}", data)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -173,7 +179,10 @@ def stub_delete(ctx, stub_id):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         StubsManager(client).delete(stub_id)
-        success(f"Deleted stub {stub_id}", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success(f"Deleted stub {stub_id}")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -186,7 +195,10 @@ def stub_reset(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         StubsManager(client).reset()
-        success("Stubs reset to default mappings", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success("Stubs reset to default mappings")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -199,7 +211,10 @@ def stub_save(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         StubsManager(client).save()
-        success("Mappings saved to disk", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success("Mappings saved to disk")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -215,7 +230,10 @@ def stub_import(ctx, file_path):
         with open(file_path) as f:
             data = json.load(f)
         result = StubsManager(client).import_stubs(data)
-        success("Stubs imported", result, json_mode)
+        if json_mode:
+            print_json(result)
+        else:
+            success("Stubs imported", result)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -316,7 +334,10 @@ def request_reset(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         RequestsLog(client).reset()
-        success("Request journal cleared", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success("Request journal cleared")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -370,7 +391,10 @@ def scenario_set(ctx, name, state):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         ScenariosManager(client).set_state(name, state)
-        success(f"Scenario '{name}' set to state '{state}'", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success(f"Scenario '{name}' set to state '{state}'")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -383,7 +407,10 @@ def scenario_reset(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         ScenariosManager(client).reset_all()
-        success("All scenarios reset", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success("All scenarios reset")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -412,7 +439,10 @@ def record_start(ctx, target_url, match_header):
         data = RecordingManager(client).start(
             target_url, list(match_header) or None
         )
-        success(f"Recording started → {target_url}", data, json_mode)
+        if json_mode:
+            print_json(data)
+        else:
+            success(f"Recording started → {target_url}", data)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -429,7 +459,7 @@ def record_stop(ctx):
             print_json(data)
         else:
             count = len(data.get("mappings", []))
-            success(f"Recording stopped. {count} stubs captured.", data, json_mode)
+            success(f"Recording stopped. {count} stubs captured.", data)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -458,8 +488,11 @@ def record_snapshot(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         data = RecordingManager(client).snapshot()
-        count = len(data.get("mappings", []))
-        success(f"Snapshot: {count} stubs captured", data, json_mode)
+        if json_mode:
+            print_json(data)
+        else:
+            count = len(data.get("mappings", []))
+            success(f"Snapshot: {count} stubs captured", data)
     except Exception as e:
         error(str(e), json_mode)
 
@@ -538,7 +571,10 @@ def reset_all(ctx):
     try:
         r = client.post("/reset")
         r.raise_for_status()
-        success("Full reset complete", json_mode=json_mode)
+        if json_mode:
+            print_json({"status": "ok"})
+        else:
+            success("Full reset complete")
     except Exception as e:
         error(str(e), json_mode)
 
@@ -552,10 +588,16 @@ def shutdown(ctx):
     json_mode = ctx.meta.get("json_mode", False)
     try:
         client.post("/shutdown")
-        success("Shutdown signal sent", json_mode=json_mode)
-    except Exception as e:
+        if json_mode:
+            print_json({"status": "ok", "message": "Shutdown signal sent"})
+        else:
+            success("Shutdown signal sent")
+    except Exception:
         # Server may drop connection before responding
-        click.echo("Shutdown signal sent (connection may have closed)")
+        if json_mode:
+            print_json({"status": "ok", "message": "Shutdown signal sent"})
+        else:
+            click.echo("Shutdown signal sent (connection may have closed)")
 
 
 if __name__ == "__main__":

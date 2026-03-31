@@ -44,4 +44,4 @@ export WIREMOCK_PORT=8080
 export WIREMOCK_SCHEME=http
 ```
 
-See `WIREMOCK.md` at the repository root for the full SOP.
+See `../WIREMOCK.md` for the full SOP.

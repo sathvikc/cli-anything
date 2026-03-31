@@ -17,8 +17,9 @@ class WireMockClient:
         return f"{self.scheme}://{self.host}:{self.port}{self.admin_prefix}"
 
     def get(self, path: str, **kwargs) -> requests.Response:
+        timeout = kwargs.pop("timeout", self.timeout)
         return requests.get(
-            f"{self.base_url()}{path}", auth=self.auth, timeout=self.timeout, **kwargs
+            f"{self.base_url()}{path}", auth=self.auth, timeout=timeout, **kwargs
         )
 
     def post(self, path: str, json=None, **kwargs) -> requests.Response:
@@ -55,7 +56,7 @@ class WireMockClient:
 
     def is_alive(self) -> bool:
         try:
-            r = requests.get(f"{self.base_url()}/health", timeout=3)
+            r = self.get("/health", timeout=3)
             return r.status_code == 200
         except Exception:
             return False
