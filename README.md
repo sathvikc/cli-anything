@@ -477,7 +477,7 @@ The catalog auto-updates whenever `registry.json` changes — new community CLIs
 | **📞 Communication & Collaboration** | Automate meeting scheduling, participant management, recording retrieval, and reporting through structured CLI | Zoom, Jitsi Meet, BigBlueButton, Mattermost |
 | **📐 Diagramming & Visualization** | Create and manipulate diagrams, flowcharts, architecture diagrams, and visual documentation programmatically | Draw.io (diagrams.net), Mermaid, PlantUML, Excalidraw, yEd |
 | **🌐 Network & Infrastructure** | Manage network services, DNS, ad-blocking, and infrastructure through structured CLI commands | AdGuardHome |
-| **🔬 Graphics & GPU Debugging** | Analyze GPU frame captures, inspect pipeline state, export shaders, and diff rendering state | RenderDoc |
+| **🔬 Graphics & GPU Debugging** | Analyze GPU frame captures, inspect pipeline state, export shaders, diff rendering state, and orchestrate Nsight Graphics captures | RenderDoc, Nsight Graphics |
 | **🎬 Video & Subtitles** | Transcribe speech, translate subtitles, burn styled captions into video — full captioning pipeline | VideoCaptioner |
 | **✨ AI Content Generation** | Generate professional deliverables (slides, docs, diagrams, websites, research reports) through AI-powered cloud APIs | [AnyGen](https://www.anygen.io), Gamma, Beautiful.ai, Tome |
 
@@ -826,6 +826,13 @@ Each application received complete, production-ready CLI interfaces — not demo
 <td align="center">✅ 19</td>
 </tr>
 <tr>
+<td align="center"><strong>🟩 Nsight Graphics</strong></td>
+<td>GPU Debugging & Profiling</td>
+<td><code>cli-anything-nsight-graphics</code></td>
+<td>Official ngfx / ngfx-capture orchestration</td>
+<td align="center">✅ <a href="nsight-graphics/agent-harness/">New</a></td>
+</tr>
+<tr>
 <td align="center"><strong>🅲🅲 CloudCompare</strong></td>
 <td>3D Point Cloud & Mesh</td>
 <td><code>cli-anything-cloudcompare</code></td>
@@ -947,7 +954,8 @@ cli-anything/
 ├── 🦙 ollama/agent-harness/             # Ollama CLI (98 tests)
 ├── 🎨 sketch/agent-harness/             # Sketch CLI (19 tests, Node.js)
 ├── 🔬 renderdoc/agent-harness/          # RenderDoc CLI (59 tests)
-└── 🎬 videocaptioner/agent-harness/     # VideoCaptioner CLI (26 tests)
+├── 🟩 nsight-graphics/agent-harness/    # Nsight Graphics CLI (new)
+├── 🎬 videocaptioner/agent-harness/     # VideoCaptioner CLI (26 tests)
 └── ☁️ cloudcompare/agent-harness/       # CloudCompare CLI (88 tests)
 ```
 

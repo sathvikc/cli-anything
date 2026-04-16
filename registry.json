@@ -398,6 +398,20 @@
       "contributor_url": "https://github.com/levishilf"
     },
     {
+      "name": "nsight-graphics",
+      "display_name": "Nsight Graphics",
+      "version": "0.1.0",
+      "description": "Windows-first orchestration of Nsight Graphics launch, Frame Debugger capture, GPU Trace, and Generate C++ Capture",
+      "requires": "NVIDIA Nsight Graphics installation with ngfx.exe or newer split capture/replay tools",
+      "homepage": "https://developer.nvidia.com/nsight-graphics",
+      "install_cmd": "pip install git+https://github.com/HKUDS/CLI-Anything.git#subdirectory=nsight-graphics/agent-harness",
+      "entry_point": "cli-anything-nsight-graphics",
+      "skill_md": "nsight-graphics/agent-harness/cli_anything/nsight_graphics/skills/SKILL.md",
+      "category": "graphics",
+      "contributor": "AiMiDi",
+      "contributor_url": "https://github.com/AiMiDi"
+    },
+    {
       "name": "videocaptioner",
       "display_name": "VideoCaptioner",
       "version": "1.0.0",
