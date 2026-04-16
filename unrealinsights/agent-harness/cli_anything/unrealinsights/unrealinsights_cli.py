@@ -370,6 +370,23 @@ def capture_run(ctx, target_exe, project, engine_root, target_args, output_trace
         _handle_exc(ctx, exc)
 
 
+def _prepare_capture_start(ctx: click.Context, replace: bool):
+    session = _get_session(ctx)
+    status = capture_status(session)
+    if status.get("active") and status.get("running"):
+        if not replace:
+            raise RuntimeError(
+                "A capture session is already running. Use `capture status` to inspect it, "
+                "`capture stop` to end it, or rerun `capture start` with `--replace`."
+            )
+
+        stop_result = stop_capture(session)
+        if not stop_result.get("termination", {}).get("stopped"):
+            raise RuntimeError("Failed to stop the existing capture session before starting a replacement.")
+    elif status.get("active"):
+        session.clear_capture()
+
+
 @capture_group.command("start")
 @click.argument("target_exe", required=False, type=click.Path(exists=False))
 @click.option("--project", type=click.Path(exists=False), default=None, help="Path to a .uproject file.")
@@ -383,21 +400,26 @@ def capture_run(ctx, target_exe, project, engine_root, target_args, output_trace
 @click.option("--output-trace", type=click.Path(exists=False), default=None, help="Output .utrace path.")
 @click.option("--channels", default=DEFAULT_CHANNELS, show_default=True, help="Comma-separated UE trace channels.")
 @click.option("--exec-cmd", "exec_cmds", multiple=True, help="Startup UE console command for -ExecCmds.")
+@click.option("--replace", is_flag=True, help="Stop the currently tracked capture session before starting a new one.")
 @click.pass_context
-def capture_start(ctx, target_exe, project, engine_root, target_args, output_trace, channels, exec_cmds):
+def capture_start(ctx, target_exe, project, engine_root, target_args, output_trace, channels, exec_cmds, replace):
     """Launch a traced target in the background and track the session."""
-    ctx.invoke(
-        capture_run,
-        target_exe=target_exe,
-        project=project,
-        engine_root=engine_root,
-        target_args=target_args,
-        output_trace=output_trace,
-        channels=channels,
-        exec_cmds=exec_cmds,
-        wait=False,
-        timeout=None,
-    )
+    try:
+        _prepare_capture_start(ctx, replace=replace)
+        ctx.invoke(
+            capture_run,
+            target_exe=target_exe,
+            project=project,
+            engine_root=engine_root,
+            target_args=target_args,
+            output_trace=output_trace,
+            channels=channels,
+            exec_cmds=exec_cmds,
+            wait=False,
+            timeout=None,
+        )
+    except Exception as exc:
+        _handle_exc(ctx, exc)
 
 
 @capture_group.command("status")

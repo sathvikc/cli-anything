@@ -2,7 +2,7 @@
 
 ## Test Inventory Plan
 
-- `test_core.py`: 46 unit tests planned
+- `test_core.py`: 49 unit tests planned
 - `test_full_e2e.py`: 10 E2E tests planned
 
 ## Unit Test Plan
@@ -20,7 +20,7 @@
 - Validate `-ExecCmds=` joining semantics
 - Validate `--project + --engine-root` convenience resolution
 - Validate tracked capture status, snapshot, and stop flows
-- Planned tests: 11
+- Planned tests: 12
 
 ### `core/export.py`
 - Validate exporter command strings for all supported exporters
@@ -35,7 +35,7 @@
 - Validate REPL session trace state
 - Validate capture convenience-layer argument handling
 - Validate `capture status`, `capture stop`, and `capture snapshot` JSON flows
-- Planned tests: 10
+- Planned tests: 12
 
 ## E2E Test Plan
 
@@ -94,7 +94,7 @@ cli-anything-unrealinsights --json backend info
 
 ### Result summary
 
-- `test_core.py`: 46 passed
+- `test_core.py`: 49 passed
 - `test_full_e2e.py`: 1 passed, 9 skipped
 - Manual smoke: installed entrypoint resolved local UE 5.5 binaries successfully
 

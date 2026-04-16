@@ -78,6 +78,9 @@ cli-anything-unrealinsights --json capture stop
 This is the preferred flow when an agent needs to start profiling now and stop
 or snapshot later in a follow-up turn.
 
+If a tracked capture session is still running, `capture start` now requires
+`--replace` so the previous process is stopped before a new one is launched.
+
 ### Offline exporters
 
 ```powershell

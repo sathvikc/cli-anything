@@ -155,6 +155,14 @@ def run_capture(
     trace_path = Path(output_trace).expanduser().resolve()
     trace_exists = trace_path.is_file()
     trace_size = trace_path.stat().st_size if trace_exists else None
+    waited = bool(result.get("waited", wait))
+    succeeded = True
+    if waited:
+        succeeded = (
+            not bool(result.get("timed_out"))
+            and result.get("exit_code") == 0
+            and trace_exists
+        )
 
     result.update(
         {
@@ -164,7 +172,7 @@ def run_capture(
             "channels": channels,
             "trace_exists": trace_exists,
             "trace_size": trace_size,
-            "succeeded": bool(trace_exists) if wait else True,
+            "succeeded": succeeded,
         }
     )
     return result

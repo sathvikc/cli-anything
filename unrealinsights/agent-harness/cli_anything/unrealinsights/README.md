@@ -49,6 +49,12 @@ cli-anything-unrealinsights --json capture start `
   --engine-root 'D:\Program Files\Epic Games\UE_5.5' `
   --output-trace D:\captures\live_session.utrace
 
+# If a tracked capture is already running, replace it explicitly
+cli-anything-unrealinsights --json capture start --replace `
+  --project 'D:\Projects\MyGame\MyGame.uproject' `
+  --engine-root 'D:\Program Files\Epic Games\UE_5.5' `
+  --output-trace D:\captures\replacement_session.utrace
+
 # Check current capture status
 cli-anything-unrealinsights --json capture status
 
@@ -167,6 +173,7 @@ cli-anything-unrealinsights --json capture stop
 Behavior:
 
 - `capture start` launches the target in the background and persists the tracked PID/trace/session metadata
+- `capture start` refuses to overwrite a still-running tracked session unless you pass `--replace`
 - `capture status` reads the persisted session state and reports whether the process is still running and how large the trace has grown
 - `capture snapshot` creates a best-effort copy of the current `.utrace` without requiring you to end the session first
 - `capture stop` performs a best-effort stop of the tracked process tree launched by the harness
