@@ -1985,13 +1985,17 @@
                     <span class="control-kicker">Sort mode</span>
                   </div>
                   <button class="sort-trigger" id="sort-trigger-public" type="button" aria-haspopup="listbox" aria-expanded="false">
-                    <span class="sort-current" id="sort-current-public">Name</span>
+                    <span class="sort-current" id="sort-current-public">Last updated</span>
                     <span class="sort-chevron">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                     </span>
                   </button>
                   <div class="sort-menu" id="sort-menu-public" role="listbox" hidden>
-                    <button class="sort-option" type="button" data-deck="public" data-value="name" role="option" aria-selected="true">
+                    <button class="sort-option" type="button" data-deck="public" data-value="updated" role="option" aria-selected="true">
+                      <span><strong>Last updated</strong><span>Put the freshest public CLIs first.</span></span>
+                      <span class="sort-option-mark">✓</span>
+                    </button>
+                    <button class="sort-option" type="button" data-deck="public" data-value="name" role="option" aria-selected="false">
                       <span><strong>Name</strong><span>Alphabetical list for known public tools.</span></span>
                       <span class="sort-option-mark">✓</span>
                     </button>
@@ -2098,7 +2102,7 @@
 
     const deckState = {
       harness: { filter: 'all', sort: 'updated', query: '' },
-      public: { filter: 'all', sort: 'name', query: '' },
+      public: { filter: 'all', sort: 'updated', query: '' },
     };
 
     async function fetchJson(urls) {
@@ -2156,6 +2160,7 @@
 
         if (publicData && publicData.clis) {
           publicClis = publicData.clis;
+          if (dates) publicClis.forEach((c) => { c.last_modified = dates[c.name]; });
         }
 
         const totalClis = harnessClis.length + publicClis.length;
@@ -2459,6 +2464,7 @@
 
     function renderPublicCard(c) {
       const isBundled = (c.install_strategy || c.package_manager) === 'bundled';
+      const dateHtml = c.last_modified ? '<div class="card-date">Updated ' + esc(c.last_modified) + '</div>' : '';
       const requiresHtml = c.requires
         ? '<div class="card-requires"><strong>Requires</strong> ' + esc(c.requires) + '</div>'
         : '';
@@ -2498,6 +2504,7 @@
           <div class="card-title">${titleHtml}</div>
           <div class="card-desc">${esc(c.description)}</div>
           <div class="card-submeta">
+            ${dateHtml}
             ${requiresHtml}
             ${directCmdHtml}
             ${installNotesHtml}

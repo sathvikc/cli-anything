@@ -1887,6 +1887,7 @@
           <div class="controls">
             <input class="search" type="text" placeholder="Search public CLIs..." id="search-public">
             <select class="sort-select" id="sort-public">
+              <option value="updated">Last updated</option>
               <option value="name">Name</option>
               <option value="category">Category</option>
             </select>
@@ -1986,7 +1987,7 @@
     // Per-deck state
     const deckState = {
       harness: { filter: 'all', sort: 'updated', query: '' },
-      public:  { filter: 'all', sort: 'name',    query: '' },
+      public:  { filter: 'all', sort: 'updated', query: '' },
     };
 
     async function fetchJson(urls) {
@@ -2042,6 +2043,7 @@
 
         if (publicData && publicData.clis) {
           publicClis = publicData.clis;
+          if (dates) publicClis.forEach(c => c.last_modified = dates[c.name]);
         }
 
         // Update counts
@@ -2393,6 +2395,9 @@
 
     function renderNpmCard(c) {
       const isBundled = (c.install_strategy || c.package_manager) === 'bundled';
+      const dateHtml = c.last_modified
+        ? `<div class="card-date">Updated ${esc(c.last_modified)}</div>`
+        : '';
       const requiresHtml = c.requires
         ? `<div class="card-requires"><strong>Requires</strong> ${esc(c.requires)}</div>`
         : '';
@@ -2439,6 +2444,7 @@
             </div>
           </div>
           <div class="card-desc">${esc(c.description)}</div>
+          ${dateHtml}
           ${requiresHtml}
           ${cliHubInstallHtml}
           ${publicNotesHtml}
